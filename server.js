@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const User = require("./models/user_model")
 const Attendance = require("./models/attendance_model");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const app = express();
 const PORT = 5000
 
