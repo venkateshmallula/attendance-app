@@ -7,7 +7,7 @@ const Attendance = require("./models/attendance_model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000
 
 // MongoDB connection
 mongoose.connect(
@@ -104,7 +104,7 @@ app.post('/checkout', async (req, res) => {
 
 // Function to generate JWT token
 const generateToken = (userId) => {
-  const secret = process.env.JWT_SECRET || "piqyu";
+  const secret = "piqyu";
   return jwt.sign({ userId }, secret, { expiresIn: '7d' }); // Adjust token expiration as needed
 };
 
