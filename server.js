@@ -4,6 +4,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const User = require("./models/user_model")
 const Attendance = require("./models/attendance_model");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -100,39 +102,46 @@ app.post('/checkout', async (req, res) => {
   }
 });
 
-//Login auth----------------------------------------------
+// Function to generate JWT token
+const generateToken = (userId) => {
+  const secret = process.env.JWT_SECRET || "piqyu";
+  return jwt.sign({ userId }, secret, { expiresIn: '7d' }); // Adjust token expiration as needed
+};
+
+// Login endpoint
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   // Check if username and password are provided
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ error: "Username and password are required" });
+    return res.status(400).json({ error: "Username and password are required" });
   }
 
   try {
-    // Find user by email and password
-    const user = await User.findOne({ email, password });
+    // Find user by email
+    const user = await User.findOne({ email , password });
 
     if (!user) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
 
-    // Assuming user has a 'name' field in the collection
-    const userName = user.name;
-    const user_id = user.employee_id;
-    // If authentication succeeds, return success response along with the user's name
-    return res
-      .status(200)
-      .json({ message: "Login successful", userName : userName,user_id: user_id, redirect: "/home" });
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    // If authentication succeeds, return success response along with the user's name and token
+    return res.status(200).json({
+      message: "Login successful",
+      userName: user.name,
+      user_id: user.employee_id,
+      token: token,
+      redirect: "/home"
+    });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
-
-
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
