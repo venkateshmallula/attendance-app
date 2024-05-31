@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const User = require("./models/user_model")
 const Attendance = require("./models/attendance_model");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -99,6 +98,20 @@ app.post('/checkout', async (req, res) => {
     res.status(200).json({ message: 'Check-out recorded successfully!' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Route to fetch dates
+app.get("/fetch-marked-dates", async (req, res) => {
+  try {
+    // Query the database for all dates
+    const dates = await Attendance.distinct("records.date");
+
+    // Send dates as JSON response
+    res.json(dates);
+  } catch (error) {
+    console.error("Error fetching dates:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
