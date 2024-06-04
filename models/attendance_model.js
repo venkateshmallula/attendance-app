@@ -20,6 +20,10 @@ const recordSchema = new mongoose.Schema({
       type: String,
       required: true,
     },
+    photo: {
+      type: String,
+      required: true,
+    },
   },
   checkOut: {
     location: {
@@ -33,6 +37,9 @@ const recordSchema = new mongoose.Schema({
       },
     },
     time: {
+      type: String,
+    },
+    photo: {
       type: String,
     },
   },
